@@ -1,0 +1,28 @@
+<!-- index.html -->
+<!DOCTYPE html>
+<html>
+<head>
+  <title>Password Page</title>
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/crypto-js/4.0.0/crypto-js.min.js"></script>
+</head>
+<body>
+<h1>Day 0</h1>
+<input id="password-input" type="password">
+<button onclick="checkPassword()">Submit</button>
+
+<script>
+  const correctHash = "fa9d520fc179912fcb49ae2a8cb3d0d99f86993408f8fd8abf3ef490804fcbfc";
+
+  function checkPassword() {
+    const input = document.getElementById('password-input').value;
+    const hash = CryptoJS.SHA256(input).toString();
+
+    if (hash === correctHash) {
+      window.location.href = "/letter.html?hash=" + hash;
+    } else {
+      alert("Incorrect password");
+    }
+  }
+</script>
+</body>
+</html>

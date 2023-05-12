@@ -1,0 +1,120 @@
+<!-- letter.html -->
+<!DOCTYPE html>
+<html>
+<head>
+  <title>Letter Page</title>
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/crypto-js/4.0.0/crypto-js.min.js"></script>
+  <style>
+    body {
+      font-family: Arial, sans-serif;
+      background: #FFFFCC;
+      padding: 20px;
+    }
+
+    #letter-content {
+      position: relative;
+      max-width: 600px;
+      margin: 0 auto;
+      line-height: 1.6;
+      padding: 30px;
+      box-shadow: 0px 0px 5px 0px rgba(0,0,0,0.1);
+      border-radius: 5px;
+      white-space: pre-line;
+      background: linear-gradient(#eee 1px, transparent 1px); /* 줄 생성 */
+      background-size: 100% 1.6em; /* 줄 크기 조절 */
+      font-size: 18px;
+    }
+
+    @media (max-width: 600px) {
+      #letter-content {
+        font-size: 22px;
+      }
+    }
+
+    #neki-img {
+      position: absolute;
+      right: 0;
+      bottom: 0;
+      height: 100px;
+      opacity: 0.8;
+    }
+
+    .heart {
+      position: absolute;
+      bottom: 0;
+      font-size: 24px;
+      animation-name: float;
+      animation-iteration-count: 1;
+      animation-timing-function: linear;
+      animation-fill-mode: forwards;
+    }
+
+    @keyframes float {
+      0% {
+        transform: translateY(0);
+        opacity: 1;
+      }
+
+      100% {
+        transform: translateY(-100vh);
+        opacity: 0;
+      }
+    }
+
+  </style>
+</head>
+<body>
+<div id="letter-content">
+  test
+
+  test
+
+  test
+
+  test
+
+  test
+
+  test
+  <img id="neki-img" src="neki.png" alt="커엽은 사진">
+</div>
+
+<script>
+  const encryptedLetter = "ENCRYPTED_LETTER"; // 이곳에 실제 암호화된 편지를 입력해주세요
+
+  function getHashFromUrl() {
+    const urlParams = new URLSearchParams(window.location.search);
+    return urlParams.get('hash');
+  }
+
+  function decryptLetter() {
+    const hash = getHashFromUrl();
+    const decryptedBytes = CryptoJS.AES.decrypt(encryptedLetter, hash);
+    const decryptedText = decryptedBytes.toString(CryptoJS.enc.Utf8);
+
+    const formattedText = decryptedText.replace(/\n/g, '<br>');
+
+    return formattedText;
+  }
+
+  // document.getElementById('letter-content').innerHTML = decryptLetter();
+
+  document.getElementById('neki-img').addEventListener('click', createHeart);
+
+  function createHeart(e) {
+    const heart = document.createElement('div');
+    heart.classList.add('heart');
+    heart.innerText = '❤️';
+    heart.style.left = Math.random() * 100 + '%';
+    heart.style.animationDuration = Math.random() * 2 + 3 + 's';
+
+    document.body.appendChild(heart);
+
+    setTimeout(() => {
+      heart.remove();
+    }, 3000);
+  }
+
+</script>
+</body>
+</html>
