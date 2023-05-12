@@ -1,34 +1,42 @@
-<!-- letter.html -->
 <!DOCTYPE html>
 <html>
 <head>
-  <title>Letter Page</title>
+  <meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=no">
+  <title>WOW</title>
+  <link rel="preconnect" href="https://fonts.gstatic.com">
+  <link href="https://fonts.googleapis.com/css?family=Gamja+Flower&display=swap" rel="stylesheet">
   <script src="https://cdnjs.cloudflare.com/ajax/libs/crypto-js/4.0.0/crypto-js.min.js"></script>
+  <script src="https://code.jquery.com/jquery-3.5.1.min.js"></script>
+  <script src="https://code.jquery.com/ui/1.12.1/jquery-ui.min.js"></script>
   <style>
     body {
-      font-family: Arial, sans-serif;
+      font-family: 'Gamja Flower', sans-serif;
       background: #FFFFCC;
       padding: 20px;
+    }
+
+    #overlay {
+      position: fixed;
+      top: 0;
+      left: 0;
+      width: 100%;
+      height: 100%;
+      background: black;
+      z-index: 9999;
     }
 
     #letter-content {
       position: relative;
       max-width: 600px;
       margin: 0 auto;
-      line-height: 1.6;
       padding: 30px;
-      box-shadow: 0px 0px 5px 0px rgba(0,0,0,0.1);
+      box-shadow: 0px 0px 5px 0px rgba(0, 0, 0, 0.1);
       border-radius: 5px;
       white-space: pre-line;
-      background: linear-gradient(#eee 1px, transparent 1px); /* 줄 생성 */
-      background-size: 100% 1.6em; /* 줄 크기 조절 */
-      font-size: 18px;
-    }
-
-    @media (max-width: 600px) {
-      #letter-content {
-        font-size: 22px;
-      }
+      font-size: 20px;
+      line-height: 1.6;
+      background: linear-gradient(#eee 1px, transparent 1px);
+      background-size: 100% 1.6em;
     }
 
     #neki-img {
@@ -49,6 +57,27 @@
       animation-fill-mode: forwards;
     }
 
+    .image {
+      position: absolute;
+      bottom: 0;
+      animation-name: floatAndRotate;
+      animation-iteration-count: 1;
+      animation-timing-function: linear;
+      animation-fill-mode: forwards;
+    }
+
+    @keyframes floatAndRotate {
+      0% {
+        transform: translateY(0) rotate(0);
+        opacity: 1;
+      }
+
+      100% {
+        transform: translateY(-100vh) rotate(360deg);
+        opacity: 0;
+      }
+    }
+
     @keyframes float {
       0% {
         transform: translateY(0);
@@ -64,57 +93,79 @@
   </style>
 </head>
 <body>
+<div id="overlay"></div>
 <div id="letter-content">
-  test
-
-  test
-
-  test
-
-  test
-
-  test
-
-  test
+  <div id="letter-text">
+  </div>
   <img id="neki-img" src="neki.png" alt="커엽은 사진">
 </div>
 
 <script>
-  const encryptedLetter = "ENCRYPTED_LETTER"; // 이곳에 실제 암호화된 편지를 입력해주세요
+  const encryptedLetter = "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";
 
-  function getHashFromUrl() {
-    const urlParams = new URLSearchParams(window.location.search);
-    return urlParams.get('hash');
-  }
+  $(document).ready(function () {
+    const hash = new URL(window.location.href).searchParams.get("hash");
 
-  function decryptLetter() {
-    const hash = getHashFromUrl();
-    const decryptedBytes = CryptoJS.AES.decrypt(encryptedLetter, hash);
-    const decryptedText = decryptedBytes.toString(CryptoJS.enc.Utf8);
+    try {
+      const decrypted = CryptoJS.AES.decrypt(encryptedLetter, hash).toString(CryptoJS.enc.Utf8);
+      if (decrypted) {
+        $("#letter-text").text(decrypted);
+        $("#overlay").fadeOut(1000);
+      } else {
+        throw new Error("Decryption failed");
+      }
+    } catch (error) {
+      alert("억덕게 그럴수가!!");
+      window.location.href = "index.html";
+    }
+  });
 
-    const formattedText = decryptedText.replace(/\n/g, '<br>');
-
-    return formattedText;
-  }
-
-  // document.getElementById('letter-content').innerHTML = decryptLetter();
+  const hearts = ['❤️', '💕', '💖', '💗'];
+  const images = ['mocha.png'];
+  const items = ['item1.png', 'item2.png', 'item3.png', 'item4.webp'];
 
   document.getElementById('neki-img').addEventListener('click', createHeart);
 
   function createHeart(e) {
-    const heart = document.createElement('div');
-    heart.classList.add('heart');
-    heart.innerText = '❤️';
-    heart.style.left = Math.random() * 100 + '%';
-    heart.style.animationDuration = Math.random() * 2 + 3 + 's';
+    const element = document.createElement('div');
+    element.style.left = e.clientX + 'px';
+    element.style.top = e.clientY + 'px';
+    element.style.position = 'fixed';
+    element.style.animationDuration = Math.random() * 2 + 3 + 's';
 
-    document.body.appendChild(heart);
+    const random = Math.random();
+    if (random < 0.05) {
+      const img = document.createElement('img');
+      img.src = items[Math.floor(Math.random() * items.length)];
+      img.style.width = '36px';
+      element.appendChild(img);
+      element.classList.add('image');
+    } else if (random < 0.2) {
+      const img = document.createElement('img');
+      img.src = images[Math.floor(Math.random() * images.length)];
+      img.style.width = '100px';
+      element.appendChild(img);
+      element.classList.add('image');
+    } else {
+      element.innerText = hearts[Math.floor(Math.random() * hearts.length)];
+      element.classList.add('heart');
+    }
+
+    document.body.appendChild(element);
 
     setTimeout(() => {
-      heart.remove();
+      element.remove();
     }, 3000);
   }
 
+  // var password = "YOUR_PASSWORD";
+  // var letter = `YOUR_LETTER`;
+  //
+  // var hashedPassword = CryptoJS.SHA256(password).toString();
+  // var encryptedLetter = CryptoJS.AES.encrypt(letter, hashedPassword).toString();
+  //
+  // console.log("Hashed Password: " + hashedPassword);
+  // console.log("Encrypted Letter: " + encryptedLetter);
 </script>
 </body>
 </html>

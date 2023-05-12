@@ -1,27 +1,77 @@
-<!-- index.html -->
 <!DOCTYPE html>
 <html>
 <head>
-  <title>Password Page</title>
+  <meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=no">
+  <title>YH-HJ 메모리얼</title>
   <script src="https://cdnjs.cloudflare.com/ajax/libs/crypto-js/4.0.0/crypto-js.min.js"></script>
+  <script src="https://code.jquery.com/jquery-3.5.1.min.js"></script>
+  <script src="https://code.jquery.com/ui/1.12.1/jquery-ui.min.js"></script>
+  <style>
+    body {
+      background-color: black;
+      display: flex;
+      justify-content: center;
+      align-items: center;
+      height: 100vh;
+      font-family: 돋음, Dotum, Baekmuk Dotum, Undotum, Apple Gothic, Latin font, sans-serif;
+      font-size: small;
+    }
+
+    #background {
+      background-image: url('background.png');
+      background-repeat: no-repeat;
+      background-size: contain;
+      width: 423px;
+      height: 240px;
+      max-width: 100%;
+      max-height: 100%;
+      position: relative;
+    }
+
+    #password-prompt {
+      position: absolute;
+      top: 25%;
+      left: 5%;
+    }
+
+    #password-input {
+      position: absolute;
+      top: 50%;
+      left: 5%;
+    }
+
+    #submit-area {
+      position: absolute;
+      right: 0;
+      bottom: 0;
+      width: 30%;
+      height: 30%;
+      cursor: pointer;
+    }
+  </style>
 </head>
-<body>
-<h1>Day 0</h1>
-<input id="password-input" type="password">
-<button onclick="checkPassword()">Submit</button>
+<body style="display: none">
+<div id="background">
+  <form onsubmit="event.preventDefault(); checkPassword();">
+    <div id="password-prompt">옆에 있는 누군가가 전할 이야기가 있다고 합니다.<br><br>힌트: day 0 (yymmdd)</div>
+    <div id="password-input">
+      <input id="password">
+    </div>
+    <div id="submit-area" onclick="checkPassword()"></div>
+  </form>
+</div>
 
 <script>
-  const correctHash = "fa9d520fc179912fcb49ae2a8cb3d0d99f86993408f8fd8abf3ef490804fcbfc";
+  $(document).ready(function() {
+    $("body").fadeIn(1000);
+  });
 
   function checkPassword() {
-    const input = document.getElementById('password-input').value;
+    const input = document.getElementById('password').value;
     const hash = CryptoJS.SHA256(input).toString();
-
-    if (hash === correctHash) {
-      window.location.href = "/letter.html?hash=" + hash;
-    } else {
-      alert("Incorrect password");
-    }
+    $("#background").fadeOut(1000, function () {
+      window.location.href = "letter.html?hash=" + hash;
+    });
   }
 </script>
 </body>
