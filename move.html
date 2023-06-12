@@ -1,0 +1,127 @@
+<!DOCTYPE html>
+<html>
+<head>
+  <title>Mobile-optimized web page game</title>
+  <script src="https://cdn.jsdelivr.net/npm/phaser@3.55.2/dist/phaser.js"></script>
+  <style>
+    .joystick {
+      position: fixed;
+      bottom: 0;
+      left: 0;
+      width: 20vw;
+      height: 20vh;
+      border: 1px solid gray;
+      border-radius: 50%;
+      opacity: 0.5;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      background: white;
+      z-index: 2;
+    }
+    .joystick > .center {
+      width: 10vw;
+      height: 10vh;
+      background: gray;
+      border-radius: 50%;
+    }
+  </style>
+</head>
+<body>
+  <div id="gameArea"></div>
+  <div class="joystick">
+    <div class="center"></div>
+  </div>
+  <script>
+    var config = {
+      type: Phaser.AUTO,
+      parent: 'gameArea',
+      width: window.innerWidth,
+      height: window.innerHeight,
+      physics: {
+        default: 'arcade',
+        arcade: {
+          gravity: { y: 300 },
+          debug: false
+        }
+      },
+      scene: {
+        preload: preload,
+        create: create,
+        update: update
+      }
+    };
+
+    var player;
+    var cursors;
+    var isJumping = false;
+
+    var game = new Phaser.Game(config);
+
+    function preload () {
+      this.load.image('sky', 'path-to-your-sky.png');
+      this.load.image('ground', 'path-to-your-ground.png');
+      this.load.spritesheet('player', 'path-to-your-player-spritesheet.png', { frameWidth: 48, frameHeight: 48 });
+    }
+
+    function create () {
+      this.add.image(400, 300, 'sky');
+      var platforms = this.physics.add.staticGroup();
+      platforms.create(400, 568, 'ground').setScale(2).refreshBody();
+      
+      player = this.physics.add.sprite(100, 450, 'player');
+      player.setBounce(0.2);
+      player.setCollideWorldBounds(true);
+
+      this.physics.add.collider(player, platforms);
+
+      cursors = this.input.keyboard.createCursorKeys();
+
+      var joystick = document.querySelector('.joystick');
+      joystick.addEventListener('touchstart', handleJoystickTouch);
+      joystick.addEventListener('touchend', handleJoystickRelease);
+    }
+
+    function update () {
+      if (cursors.left.isDown) {
+        player.setVelocityX(-160);
+      } else if (cursors.right.isDown) {
+        player.setVelocityX(160);
+      } else {
+        player.setVelocityX(0);
+      }
+      if (cursors.up.isDown && player.body.touching.down) {
+        isJumping = true;
+        player.setVelocityY(-330);
+      }
+      if (player.body.touching.down) {
+        isJumping = false;
+      }
+    }
+
+    function handleJoystickTouch(e) {
+      var touch = e.touches[0];
+      var joystickCenter = document.querySelector('.center').getBoundingClientRect();
+      var inCenter = touch.clientX > joystickCenter.left && touch.clientX < joystickCenter.right && touch.clientY > joystickCenter.top && touch.clientY < joystickCenter.bottom;
+      
+      if (inCenter) {
+        alert('Talk');
+      } else if (touch.clientX < joystickCenter.left) {
+        cursors.left.isDown = true;
+      } else if (touch.clientX > joystickCenter.right) {
+        cursors.right.isDown = true;
+      } else if (touch.clientY < joystickCenter.top) {
+        if (!isJumping && player.body.touching.down) {
+          isJumping = true;
+          player.setVelocityY(-330);
+        }
+      }
+    }
+
+    function handleJoystickRelease(e) {
+      cursors.left.isDown = false;
+      cursors.right.isDown = false;
+    }
+  </script>
+</body>
+</html>
